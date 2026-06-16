@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json.schemastore.org/wrangler",
+  "name": "dubai-move-pro",
+  "compatibility_date": "2025-11-21",
+  "main": "src/server.js",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ]
+}
