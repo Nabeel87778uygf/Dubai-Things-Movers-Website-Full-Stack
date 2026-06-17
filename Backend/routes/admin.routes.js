@@ -1,5 +1,6 @@
 import express from "express";
-import { protect, adminOnly } from "../middleware/auth.middleware.js";
+import { protect } from "../middleware/auth.middleware.js";
+import { isAdmin } from "../middleware/isAdmin.js";
 import {
     getAllBookings,
     assignDriver,
@@ -9,9 +10,9 @@ import {
 
 const router = express.Router();
 
-router.get("/bookings", protect, adminOnly, getAllBookings);
-router.put("/assign/:id", protect, adminOnly, assignDriver);
-router.get("/drivers", protect, adminOnly, getAvailableDrivers);
-router.put("/status/:id", protect, adminOnly, updateBookingStatus);
+router.get("/bookings", protect, isAdmin, getAllBookings);
+router.put("/assign/:id", protect, isAdmin, assignDriver);
+router.get("/drivers", protect, isAdmin, getAvailableDrivers);
+router.put("/status/:id", protect, isAdmin, updateBookingStatus);
 
 export default router;
