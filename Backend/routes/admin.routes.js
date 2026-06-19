@@ -1,18 +1,29 @@
 import express from "express";
 import { protect } from "../middleware/auth.middleware.js";
-import { isAdmin } from "../middleware/isAdmin.js";
+import isAdmin from "../middleware/isAdmin.js";
+
+
 import {
-    getAllBookings,
-    assignDriver,
-    getAvailableDrivers,
-    updateBookingStatus
+    getDashboard, getBookingById, getAllBookings, updateBookingStatus, getDrivers, getCustomers
 } from "../controllers/admin.controller.js";
 
+
 const router = express.Router();
+router.get("/dashboard", protect, isAdmin, getDashboard);
+
+router.get("/bookings/:id", protect, isAdmin, getBookingById);
 
 router.get("/bookings", protect, isAdmin, getAllBookings);
-router.put("/assign/:id", protect, isAdmin, assignDriver);
-router.get("/drivers", protect, isAdmin, getAvailableDrivers);
+
 router.put("/status/:id", protect, isAdmin, updateBookingStatus);
 
+router.get("/drivers", protect, isAdmin, getDrivers);
+
+router.get("/customers", protect, isAdmin, getCustomers);
+
 export default router;
+
+
+
+
+
