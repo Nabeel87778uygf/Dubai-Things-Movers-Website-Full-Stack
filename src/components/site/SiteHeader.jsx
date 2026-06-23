@@ -1,15 +1,33 @@
 import { Link } from "@tanstack/react-router";
 import { Truck, Globe, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [lang, setLang] = useState("EN");
+  const [role, setRole] = useState(
+    typeof window !== "undefined" ? localStorage.getItem("role") : null
+  );
+
+  // Jab bhi login/logout ho, role update karo
+  useEffect(() => {
+    const syncRole = () => {
+      setRole(localStorage.getItem("role"));
+    };
+    // Browser ka built-in storage event (different tabs ke liye)
+    window.addEventListener("storage", syncRole);
+    // Same tab ke liye custom event (login.jsx already dispatch karta hai)
+    window.addEventListener("storage", syncRole);
+    return () => {
+      window.removeEventListener("storage", syncRole);
+    };
+  }, []);
+
   const nav = [
     { to: "/", label: "Home" },
     { to: "/booking", label: "Book Now" },
-    { to: "/admin", label: "Admin" },
+    ...(role === "admin" ? [{ to: "/admin", label: "Admin" }] : []),
   ];
 
   return (

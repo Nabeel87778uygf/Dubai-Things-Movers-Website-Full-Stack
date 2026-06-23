@@ -4,6 +4,7 @@ import {
   Outlet,
   useRouterState,
   useNavigate,
+  redirect,
 } from "@tanstack/react-router";
 import { useEffect } from "react";
 import {
@@ -18,6 +19,16 @@ import {
 import { Toaster } from "@/components/ui/sonner";
 
 export const Route = createFileRoute("/admin")({
+  beforeLoad: () => {
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    const role = typeof window !== "undefined" ? localStorage.getItem("role") : null;
+    
+    if (!token) {
+      throw redirect({ to: "/login" });
+    } else if (role !== "admin") {
+      throw redirect({ to: "/" });
+    }
+  },
   head: () => ({ meta: [{ title: "Admin Dashboard — MoveMate" }] }),
   component: AdminLayout,
 });
@@ -37,13 +48,16 @@ function AdminLayout() {
   // PROTECTED ROUTE
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
     if (!token) {
       navigate({ to: "/login", replace: true });
+    } else if (role !== "admin") {
+      navigate({ to: "/", replace: true });
     }
   }, [navigate, pathname]);
 
   // optional: better UX (prevent flicker)
-  if (!localStorage.getItem("token")) {
+  if (!localStorage.getItem("token") || localStorage.getItem("role") !== "admin") {
     return null;
   }
 
@@ -90,6 +104,7 @@ function AdminLayout() {
               localStorage.removeItem("token");
               localStorage.removeItem("role");
               localStorage.removeItem("userId");
+              window.dispatchEvent(new Event("storage")); // Header ko update karo
               navigate({ to: "/login", replace: true });
             }}
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-sidebar-foreground/70 hover:bg-sidebar-accent w-full cursor-pointer"

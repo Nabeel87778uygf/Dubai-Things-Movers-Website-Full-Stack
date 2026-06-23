@@ -1,4 +1,6 @@
 import Booking from "../models/Booking.model.js";
+import User from "../models/user.model.js";
+
 
 // CREATE BOOKING
 export const createBooking = async (req, res) => {
@@ -39,30 +41,57 @@ export const getMyBookings = async (req, res) => {
     }
 };
 
-// ACCEPT OFFER (CUSTOMER ONLY)
+
+//accept offer
 export const acceptOffer = async (req, res) => {
     try {
 
         if (req.user.role !== "customer") {
-            return res.status(403).json({ message: "Only customer can accept offers" });
+            return res.status(403).json({
+                success: false,
+                message: "Only customer can accept offers"
+            });
         }
 
         const booking = await Booking.findById(req.params.id);
 
         if (!booking) {
-            return res.status(404).json({ message: "Booking not found" });
+            return res.status(404).json({
+                success: false,
+                message: "Booking not found"
+            });
         }
 
-        const offer = booking.offers.id(req.body.offerId);
+        // OWNER CHECK
+        if (
+            booking.customer.toString() !==
+            req.user._id.toString()
+        ) {
+            return res.status(403).json({
+                success: false,
+                message: "Unauthorized access"
+            });
+        }
+
+        const offer =
+            booking.offers.id(req.body.offerId);
 
         if (!offer) {
-            return res.status(404).json({ message: "Offer not found" });
+            return res.status(404).json({
+                success: false,
+                message: "Offer not found"
+            });
         }
 
+        // ACCEPT OFFER
         offer.status = "accepted";
 
+        // REJECT OTHERS
         booking.offers.forEach(o => {
-            if (o._id.toString() !== req.body.offerId) {
+            if (
+                o._id.toString() !==
+                req.body.offerId
+            ) {
                 o.status = "rejected";
             }
         });
@@ -71,15 +100,29 @@ export const acceptOffer = async (req, res) => {
         booking.driver = offer.driver;
         booking.status = "accepted";
 
+        // DRIVER BUSY
+        const driver =
+            await User.findById(offer.driver);
+
+        if (driver) {
+            driver.isAvailable = false;
+            await driver.save();
+        }
+
         await booking.save();
 
-        res.json({
+        res.status(200).json({
             success: true,
-            message: "Offer accepted",
-            booking,
+            message: "Offer accepted successfully",
+            booking
         });
 
     } catch (error) {
-        res.status(500).json({ message: error.message });
+
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+
     }
 };

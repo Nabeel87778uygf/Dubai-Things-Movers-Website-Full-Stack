@@ -4,7 +4,7 @@ import isAdmin from "../middleware/isAdmin.js";
 
 
 import {
-    getDashboard, getBookingById, getAllBookings, updateBookingStatus, getDrivers, getCustomers
+    getDashboard, getBookingById, getAllBookings, updateBookingStatus, getDrivers, getCustomers, assignDriver
 } from "../controllers/admin.controller.js";
 
 
@@ -16,6 +16,8 @@ router.get("/bookings/:id", protect, isAdmin, getBookingById);
 router.get("/bookings", protect, isAdmin, getAllBookings);
 
 router.put("/status/:id", protect, isAdmin, updateBookingStatus);
+
+router.put("/assign/:id", protect, isAdmin, assignDriver);
 
 router.get("/drivers", protect, isAdmin, getDrivers);
 

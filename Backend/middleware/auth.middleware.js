@@ -7,9 +7,9 @@ export const protect = async (req, res, next) => {
 
         if (
             req.headers.authorization &&
-            req.headers.authorization.startsWith("Bearer ")
+            req.headers.authorization.startsWith("Bearer")
         ) {
-            token = req.headers.authorization.split(" ")[1];
+            token = req.headers.authorization.split(/\s+/)[1];
         }
 
         if (!token) {

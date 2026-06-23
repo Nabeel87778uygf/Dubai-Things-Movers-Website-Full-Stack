@@ -281,8 +281,6 @@ function Booking() {
         serviceType: service,
         price: calculatedPrice,
         ...formData,
-      }, {
-        headers: { 'x-user-id': userId }
       });
 
       toast.success("Booking created successfully!");

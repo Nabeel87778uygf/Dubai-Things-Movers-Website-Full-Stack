@@ -18,12 +18,16 @@ function CustomerDashboard() {
     }, []);
 
     const fetchBookings = async () => {
-        const userId = localStorage.getItem('userId');
-        const res = await axiosInstance.get('/booking/my-bookings', {
-            headers: { 'x-user-id': userId }
-        });
-        setBookings(res.data);
-        setLoading(false);
+        try {
+            const res = await axiosInstance.get('/booking/my');
+            if (res.data.success) {
+                setBookings(res.data.bookings);
+            }
+        } catch (error) {
+            console.error("Failed to fetch bookings", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const getStatusIcon = (status) => {

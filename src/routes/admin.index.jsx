@@ -20,25 +20,31 @@ function Dashboard() {
   }, []);
 
   const fetchBookings = async () => {
-    const userId = localStorage.getItem('userId');
-    const res = await axiosInstance.get('/booking/all', {
-      headers: { 'x-user-id': userId }
-    });
-    setBookings(res.data);
-    calculateStats(res.data);
+    try {
+      const res = await axiosInstance.get('/admin/bookings');
+      if (res.data.success) {
+        setBookings(res.data.bookings);
+        calculateStats(res.data.bookings);
+      }
+    } catch (error) {
+      toast.error("Failed to fetch bookings");
+    }
   };
 
   const fetchDrivers = async () => {
-    const userId = localStorage.getItem('userId');
-    const res = await axiosInstance.get('/auth/drivers', {
-      headers: { 'x-user-id': userId }
-    });
-      setDrivers(Array.isArray(res.data) ? res.data : []);
+    try {
+      const res = await axiosInstance.get('/admin/drivers');
+      if (res.data.success) {
+        setDrivers(res.data.drivers);
+      }
+    } catch (error) {
+      toast.error("Failed to fetch drivers");
+    }
   };
 
   const calculateStats = (bookingsData) => {
-    const total = bookingsData.reduce((sum, b) => sum + (b.price || 0), 0);
-    const commission = bookingsData.reduce((sum, b) => sum + (b.commission || 0), 0);
+    const total = bookingsData.reduce((sum, b) => sum + (Number(b.price) || 0), 0);
+    const commission = bookingsData.reduce((sum, b) => sum + (Number(b.commission) || 0), 0);
     setStats({
       totalBookings: bookingsData.length,
       totalRevenue: total,
@@ -47,10 +53,11 @@ function Dashboard() {
   };
 
   const assignDriver = async (bookingId, driverId) => {
+    if (!driverId) return;
     try {
-      await axiosInstance.put(`/booking/assign/${bookingId}`, { driverId }, {
-        headers: { 'x-user-id': localStorage.getItem('userId') }
-      });
+      // Note: Backend doesn't have an assign route in admin controller yet.
+      // This might throw 404 until implemented.
+      await axiosInstance.put(`/admin/assign/${bookingId}`, { driverId });
       toast.success('Driver assigned successfully');
       fetchBookings();
     } catch (error) {

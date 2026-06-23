@@ -25,50 +25,57 @@ function DriverDashboard() {
     }, []);
 
     const fetchAvailableJobs = async () => {
-        const res = await axiosInstance.get('/booking/available', {
-            headers: { 'x-user-id': userId }
-        });
-        setAvailableJobs(res.data);
+        try {
+            const res = await axiosInstance.get('/driver/available-bookings');
+            setAvailableJobs(res.data.bookings || []);
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     const fetchMyJobs = async () => {
-        const res = await axiosInstance.get('/booking/my-bookings', {
-            headers: { 'x-user-id': userId }
-        });
-        setMyJobs(res.data);
+        try {
+            const res = await axiosInstance.get('/driver/my-bookings');
+            setMyJobs(res.data.bookings || []);
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     const fetchEarnings = async () => {
-        // Fetch earnings from user profile
-        const res = await axiosInstance.get('/auth/me', {
-            headers: { 'x-user-id': userId }
-        });
-        setEarnings(res.data.earnings || 0);
+        try {
+            const res = await axiosInstance.get('/auth/me');
+            setEarnings(res.data.user?.earnings || 0);
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     const acceptJob = async (bookingId) => {
+        const offerPrice = window.prompt("Enter your offer price in AED:");
+        if (!offerPrice) return;
+
         try {
-            await axiosInstance.put(`/booking/accept/${bookingId}`, {}, {
-                headers: { 'x-user-id': userId }
-            });
-            toast.success('Job accepted!');
+            await axiosInstance.post(`/driver/send-offer/${bookingId}`, { price: Number(offerPrice) });
+            toast.success('Offer sent successfully!');
             fetchAvailableJobs();
-            fetchMyJobs();
         } catch (error) {
-            toast.error('Failed to accept job');
+            toast.error(error.response?.data?.message || 'Failed to send offer');
         }
     };
 
     const updateStatus = async (bookingId, status) => {
         try {
-            await axiosInstance.put(`/booking/status/${bookingId}`, { status }, {
-                headers: { 'x-user-id': userId }
-            });
+            if (status === 'picked') {
+                await axiosInstance.put(`/driver/start-trip/${bookingId}`);
+            } else if (status === 'delivered') {
+                await axiosInstance.put(`/driver/complete-trip/${bookingId}`);
+            }
             toast.success(`Status updated to ${status}`);
             fetchMyJobs();
             fetchEarnings();
         } catch (error) {
-            toast.error('Failed to update status');
+            toast.error(error.response?.data?.message || 'Failed to update status');
         }
     };
 
@@ -116,12 +123,9 @@ function DriverDashboard() {
                                     </p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-2xl font-bold text-blue-600">AED {job.price}</p>
-                                    <p className="text-sm text-gray-500">
-                                        You earn: AED {job.price * 0.8}
-                                    </p>
+                                    {job.price > 0 && <p className="text-2xl font-bold text-blue-600">AED {job.price}</p>}
                                     <Button onClick={() => acceptJob(job._id)} className="mt-2">
-                                        Accept Job
+                                        Send Offer
                                     </Button>
                                 </div>
                             </div>

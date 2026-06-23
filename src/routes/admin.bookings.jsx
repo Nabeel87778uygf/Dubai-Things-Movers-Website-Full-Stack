@@ -1,87 +1,44 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Check, X, UserPlus, MoreHorizontal, Filter, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { axiosInstance } from "@/lib/axios";
 
 export const Route = createFileRoute("/admin/bookings")({
   component: BookingsPage,
 });
-
-const initial = [
-  {
-    id: "MM-2945",
-    name: "Aisha Khan",
-    phone: "+971 50 111 2233",
-    service: "Home Shifting",
-    pickup: "JLT Cluster D",
-    drop: "Marina Tower 4",
-    date: "2026-05-18",
-    status: "pending",
-  },
-  {
-    id: "MM-2944",
-    name: "Omar Al Farsi",
-    phone: "+971 55 998 7766",
-    service: "Office Relocation",
-    pickup: "DIFC Gate 3",
-    drop: "Business Bay",
-    date: "2026-05-17",
-    status: "in_progress",
-    employee: "Karim H.",
-  },
-  {
-    id: "MM-2943",
-    name: "Priya Sharma",
-    phone: "+971 52 444 8899",
-    service: "Furniture Moving",
-    pickup: "Jumeirah 2",
-    drop: "Al Barsha",
-    date: "2026-05-17",
-    status: "pending",
-  },
-  {
-    id: "MM-2942",
-    name: "Mohammed Ali",
-    phone: "+971 50 222 1100",
-    service: "Packing Services",
-    pickup: "Downtown",
-    drop: "Palm Jumeirah",
-    date: "2026-05-16",
-    status: "completed",
-    employee: "Salim R.",
-  },
-  {
-    id: "MM-2941",
-    name: "Fatima Hassan",
-    phone: "+971 56 333 7711",
-    service: "Home Shifting",
-    pickup: "Mirdif",
-    drop: "Sharjah",
-    date: "2026-05-15",
-    status: "completed",
-    employee: "Yusuf A.",
-  },
-  {
-    id: "MM-2940",
-    name: "Raj Kumar",
-    phone: "+971 54 666 4422",
-    service: "Office Relocation",
-    pickup: "Internet City",
-    drop: "Media City",
-    date: "2026-05-14",
-    status: "rejected",
-  },
-];
-
 function BookingsPage() {
-  const [bookings, setBookings] = useState(initial);
+  const [bookings, setBookings] = useState([]);
   const [filter, setFilter] = useState("all");
+
+  useEffect(() => {
+    fetchBookings();
+  }, []);
+
+  const fetchBookings = async () => {
+    try {
+      const res = await axiosInstance.get('/admin/bookings');
+      if (res.data.success) {
+        setBookings(res.data.bookings);
+      }
+    } catch (error) {
+      toast.error("Failed to fetch bookings");
+    }
+  };
 
   const filtered = filter === "all" ? bookings : bookings.filter((b) => b.status === filter);
 
-  const update = (id, patch) => {
-    setBookings((b) => b.map((x) => (x.id === id ? { ...x, ...patch } : x)));
+  const updateStatus = async (id, newStatus) => {
+    try {
+      const res = await axiosInstance.put(`/admin/status/${id}`, { status: newStatus });
+      if (res.data.success) {
+        setBookings((b) => b.map((x) => (x._id === id ? { ...x, status: newStatus } : x)));
+        toast.success(`Booking status updated to ${newStatus}`);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to update status");
+    }
   };
 
   const counts = {
@@ -149,38 +106,42 @@ function BookingsPage() {
             <tbody>
               {filtered.map((b) => (
                 <tr
-                  key={b.id}
+                  key={b._id}
                   className="border-t border-border hover:bg-secondary/30 transition-colors"
                 >
                   <td className="px-6 py-4">
-                    <div className="font-mono text-xs font-semibold text-primary">{b.id}</div>
-                    {b.employee && (
-                      <div className="text-xs text-muted-foreground mt-0.5">👷 {b.employee}</div>
+                    <div className="font-mono text-xs font-semibold text-primary" title={b._id}>
+                      ...{b._id.slice(-6)}
+                    </div>
+                    {b.driver && (
+                      <div className="text-xs text-muted-foreground mt-0.5">👷 {b.driver.name}</div>
                     )}
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2.5">
                       <div className="h-8 w-8 rounded-full bg-gradient-primary grid place-items-center text-primary-foreground text-xs font-semibold">
-                        {b.name.charAt(0)}
+                        {b.customer?.name?.charAt(0) || b.fullName?.charAt(0) || "C"}
                       </div>
                       <div>
-                        <div className="font-semibold">{b.name}</div>
-                        <div className="text-xs text-muted-foreground">{b.phone}</div>
+                        <div className="font-semibold">{b.customer?.name || b.fullName}</div>
+                        <div className="text-xs text-muted-foreground">{b.customer?.phone || b.phoneNumber}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">{b.service}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{b.serviceType}</td>
                   <td className="px-6 py-4">
                     <div className="text-xs">
                       <div>
-                        <span className="text-muted-foreground">From:</span> {b.pickup}
+                        <span className="text-muted-foreground">From:</span> {b.pickupAddress}
                       </div>
                       <div>
-                        <span className="text-muted-foreground">To:</span> {b.drop}
+                        <span className="text-muted-foreground">To:</span> {b.dropAddress}
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-muted-foreground">{b.date}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-muted-foreground">
+                    {new Date(b.movingDate || b.createdAt).toLocaleDateString()}
+                  </td>
                   <td className="px-6 py-4">
                     <StatusBadge status={b.status} />
                   </td>
@@ -189,37 +150,21 @@ function BookingsPage() {
                       {b.status === "pending" && (
                         <>
                           <button
-                            onClick={() => {
-                              update(b.id, { status: "in_progress" });
-                              toast.success(`Accepted ${b.id}`);
-                            }}
+                            onClick={() => updateStatus(b._id, "accepted")}
                             className="h-8 w-8 grid place-items-center rounded-lg bg-success/10 text-success hover:bg-success/20 transition-colors"
                             title="Accept"
                           >
                             <Check className="h-4 w-4" />
                           </button>
                           <button
-                            onClick={() => {
-                              update(b.id, { status: "rejected" });
-                              toast.error(`Rejected ${b.id}`);
-                            }}
+                            onClick={() => updateStatus(b._id, "cancelled")}
                             className="h-8 w-8 grid place-items-center rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors"
-                            title="Reject"
+                            title="Cancel"
                           >
                             <X className="h-4 w-4" />
                           </button>
                         </>
                       )}
-                      <button
-                        onClick={() => {
-                          update(b.id, { employee: "Karim H." });
-                          toast.success(`Assigned to Karim H.`);
-                        }}
-                        className="h-8 w-8 grid place-items-center rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
-                        title="Assign"
-                      >
-                        <UserPlus className="h-4 w-4" />
-                      </button>
                       <button className="h-8 w-8 grid place-items-center rounded-lg hover:bg-secondary transition-colors">
                         <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
                       </button>
@@ -244,9 +189,13 @@ function StatusBadge({ status }) {
   const cfg = {
     pending: { label: "Pending", cls: "bg-warning/15 text-warning-foreground border-warning/30" },
     in_progress: { label: "In Progress", cls: "bg-primary/10 text-primary border-primary/30" },
+    accepted: { label: "Accepted", cls: "bg-blue-500/10 text-blue-500 border-blue-500/30" },
+    picked: { label: "Picked", cls: "bg-purple-500/10 text-purple-500 border-purple-500/30" },
+    delivered: { label: "Delivered", cls: "bg-success/10 text-success border-success/30" },
     completed: { label: "Completed", cls: "bg-success/10 text-success border-success/30" },
-    rejected: {
-      label: "Rejected",
+    rejected: { label: "Rejected", cls: "bg-destructive/10 text-destructive border-destructive/30" },
+    cancelled: {
+      label: "Cancelled",
       cls: "bg-destructive/10 text-destructive border-destructive/30",
     },
   }[status];
