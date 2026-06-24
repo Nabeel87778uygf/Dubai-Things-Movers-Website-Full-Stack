@@ -42,6 +42,53 @@ export const getMyBookings = async (req, res) => {
 };
 
 
+//get booking details api
+export const getBookingDetails = async (req, res) => {
+
+    try {
+
+        const booking = await Booking.findOne({
+            _id: req.params.id,
+            customer: req.user._id
+        })
+            .populate(
+                "offers.driver",
+                "name phone vehicleType vehicleNumber"
+            )
+            .populate(
+                "driver",
+                "name phone"
+            );
+
+
+        if (!booking) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Booking not found"
+            });
+
+        }
+
+
+        res.json({
+            success: true,
+            booking
+        });
+
+
+    } catch (error) {
+
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+
+    }
+
+}
+
+
 //accept offer
 export const acceptOffer = async (req, res) => {
     try {

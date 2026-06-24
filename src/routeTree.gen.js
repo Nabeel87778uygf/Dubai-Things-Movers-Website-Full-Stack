@@ -11,11 +11,14 @@
 import { Route as rootRouteImport } from "./routes/__root";
 import { Route as LoginRouteImport } from "./routes/login";
 import { Route as BookingRouteImport } from "./routes/booking";
-import { Route as AdminRouteImport } from "./routes/admin";
+import { Route as ProfileRouteImport } from "./routes/profile";
+import { Route as DriverRouteImport } from "./routes/Driver";
+import { Route as CustomerRouteImport } from "./routes/Customer";
 import { Route as IndexRouteImport } from "./routes/index";
-import { Route as AdminIndexRouteImport } from "./routes/admin.index";
-import { Route as AdminEmployeesRouteImport } from "./routes/admin.employees";
-import { Route as AdminBookingsRouteImport } from "./routes/admin.bookings";
+import { Route as AdminRouteImport } from "./routes/admin/admin";
+import { Route as AdminIndexRouteImport } from "./routes/admin/adminDashboard";
+import { Route as AdminEmployeesRouteImport } from "./routes/admin/admin.employees";
+import { Route as AdminBookingsRouteImport } from "./routes/admin/admin.booking";
 
 const LoginRoute = LoginRouteImport.update({
   id: "/login",
@@ -27,9 +30,24 @@ const BookingRoute = BookingRouteImport.update({
   path: "/booking",
   getParentRoute: () => rootRouteImport,
 });
+const ProfileRoute = ProfileRouteImport.update({
+  id: "/profile",
+  path: "/profile",
+  getParentRoute: () => rootRouteImport,
+});
 const AdminRoute = AdminRouteImport.update({
   id: "/admin",
   path: "/admin",
+  getParentRoute: () => rootRouteImport,
+});
+const DriverRoute = DriverRouteImport.update({
+  id: "/Driver",
+  path: "/Driver",
+  getParentRoute: () => rootRouteImport,
+});
+const CustomerRoute = CustomerRouteImport.update({
+  id: "/Customer",
+  path: "/Customer",
   getParentRoute: () => rootRouteImport,
 });
 const IndexRoute = IndexRouteImport.update({
@@ -38,7 +56,7 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 });
 const AdminIndexRoute = AdminIndexRouteImport.update({
-  id: "/",
+  id: "/admin/",
   path: "/",
   getParentRoute: () => AdminRoute,
 });
@@ -54,9 +72,9 @@ const AdminBookingsRoute = AdminBookingsRouteImport.update({
 });
 
 const AdminRouteChildren = {
+  AdminIndexRoute: AdminIndexRoute,
   AdminBookingsRoute: AdminBookingsRoute,
   AdminEmployeesRoute: AdminEmployeesRoute,
-  AdminIndexRoute: AdminIndexRoute,
 };
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren);
@@ -66,5 +84,8 @@ const rootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   BookingRoute: BookingRoute,
   LoginRoute: LoginRoute,
+  ProfileRoute: ProfileRoute,
+  DriverRoute: DriverRoute,
+  CustomerRoute: CustomerRoute,
 };
 export const routeTree = rootRouteImport._addFileChildren(rootRouteChildren)._addFileTypes();

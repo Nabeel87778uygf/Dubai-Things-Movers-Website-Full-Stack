@@ -137,73 +137,72 @@ export const getBookingById = async (req, res) => {
 // UPDATE BOOKING STATUS
 export const updateBookingStatus = async (req, res) => {
     try {
-        const booking =
-            await Booking.findById(req.params.id);
+        const { status } = req.body;
 
-        if (!booking) {
-            return res.status(404).json({
-
+        if (!status) {
+            return res.status(400).json({
                 success: false,
-
-                message: "Booking not found"
-
+                message: "Status is required in request body"
             });
         }
+
         const allowedStatuses = [
             "pending", "accepted", "picked", "delivered", "cancelled"
         ];
 
-        if (
-            !allowedStatuses.includes(
-                req.body.status
-            )
-        ) {
-
+        if (!allowedStatuses.includes(status)) {
             return res.status(400).json({
-
                 success: false,
-                message: "Invalid booking status"
+                message: `Invalid status: '${status}'. Allowed: ${allowedStatuses.join(", ")}`
             });
         }
 
-        booking.status =
-            req.body.status;
+        // Find booking first (without save, to avoid validation on old data)
+        const booking = await Booking.findById(req.params.id);
 
-        if (
-            req.body.status === "delivered"
-            &&
-            booking.driver
-        ) {
-            const commission =
+        if (!booking) {
+            return res.status(404).json({
+                success: false,
+                message: "Booking not found"
+            });
+        }
 
-                Number(booking.price || 0)
-                *
-                0.20;
-            booking.commission =
-                commission;
+        // Build update object
+        const updateFields = { status };
 
-            const driver =
+        // When delivered: calculate commission and update driver earnings
+        if (status === "delivered" && booking.driver) {
+            const price = Number(booking.price) || 0;
+            const commission = parseFloat((price * 0.20).toFixed(2));
+            updateFields.commission = commission;
 
-                await User.findById(
-                    booking.driver
-                );
-
+            const driver = await User.findById(booking.driver);
             if (driver) {
-                driver.isAvailable = true;
-                driver.earnings +=
-                    Number(booking.price || 0) -
-                    commission;
-                await driver.save();
+                const currentEarnings = Number(driver.earnings) || 0;
+                await User.findByIdAndUpdate(booking.driver, {
+                    $set: {
+                        isAvailable: true,
+                        earnings: parseFloat((currentEarnings + (price - commission)).toFixed(2))
+                    }
+                });
             }
         }
-        await booking.save();
+
+        // Use findByIdAndUpdate to bypass Mongoose validation on existing old documents
+        const updatedBooking = await Booking.findByIdAndUpdate(
+            req.params.id,
+            { $set: updateFields },
+            { new: true, runValidators: false }
+        );
+
         res.status(200).json({
             success: true,
-            message: "Booking status updated",
-            booking
+            message: `Booking status updated to '${status}'`,
+            booking: updatedBooking
         });
 
     } catch (error) {
+        console.error("updateBookingStatus error:", error.message);
         res.status(500).json({
             success: false,
             message: error.message
