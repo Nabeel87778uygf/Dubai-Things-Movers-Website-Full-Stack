@@ -9,7 +9,7 @@ export const register = async (req, res) => {
 
         const {
             name,
-            email,
+            email: rawEmail,
             phone,
             password,
             role,
@@ -20,6 +20,8 @@ export const register = async (req, res) => {
             licenseNumber
 
         } = req.body;
+
+        const email = rawEmail ? rawEmail.toLowerCase().trim() : "";
 
         // REQUIRED FIELDS
 
@@ -154,9 +156,11 @@ export const login = async (req, res) => {
 
 
         const {
-            email,
+            email: rawEmail,
             password
         } = req.body;
+
+        const email = rawEmail ? rawEmail.toLowerCase().trim() : "";
 
         const user =
             await User.findOne({

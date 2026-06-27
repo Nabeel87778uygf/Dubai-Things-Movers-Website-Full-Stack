@@ -28,6 +28,8 @@ export function SiteHeader() {
     { to: "/", label: "Home" },
     { to: "/booking", label: "Book Now" },
     ...(role === "admin" ? [{ to: "/admin", label: "Admin" }] : []),
+    ...(role === "customer" ? [{ to: "/Customer", label: "Dashboard" }] : []),
+    ...(role === "driver" ? [{ to: "/Driver", label: "Driver Dashboard" }] : []),
   ];
 
   return (
@@ -66,11 +68,19 @@ export function SiteHeader() {
           >
             <Globe className="h-4 w-4" /> {lang}
           </button>
-          <Link to="/login">
-            <Button variant="outline" size="sm">
-              Sign in
-            </Button>
-          </Link>
+          {role ? (
+            <Link to={role === "admin" ? "/admin" : role === "driver" ? "/Driver" : "/Customer"}>
+              <Button variant="outline" size="sm">
+                Dashboard
+              </Button>
+            </Link>
+          ) : (
+            <Link to="/login">
+              <Button variant="outline" size="sm">
+                Sign in
+              </Button>
+            </Link>
+          )}
           <Link to="/booking">
             <Button size="sm" className="bg-gradient-primary hover:opacity-90 shadow-soft">
               Book Now
@@ -96,13 +106,23 @@ export function SiteHeader() {
                 {n.label}
               </Link>
             ))}
-            <Link
-              to="/login"
-              onClick={() => setOpen(false)}
-              className="px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-secondary"
-            >
-              Sign in
-            </Link>
+            {role ? (
+              <Link
+                to={role === "admin" ? "/admin" : role === "driver" ? "/Driver" : "/Customer"}
+                onClick={() => setOpen(false)}
+                className="px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-secondary"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setOpen(false)}
+                className="px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-secondary"
+              >
+                Sign in
+              </Link>
+            )}
             <Link to="/booking" onClick={() => setOpen(false)}>
               <Button className="w-full mt-2 bg-gradient-primary">Book Now</Button>
             </Link>

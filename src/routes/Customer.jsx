@@ -1,104 +1,97 @@
-// src/routes/dashboard/customer.tsx
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { axiosInstance } from "@/lib/axios";
-import { Button } from "@/components/ui/button";
-import { Package, Clock, CheckCircle, Truck, MapPin } from "lucide-react";
+import { CustomerDashboard } from "@/components/Customer/Dashboard";
+import { CustomerBookings } from "@/components/Customer/Bookings";
+import { CustomerProfile } from "@/components/Customer/Profile";
 
 export const Route = createFileRoute("/Customer")({
-    component: CustomerDashboard,
+  component: CustomerPage,
 });
 
-function CustomerDashboard() {
-    const [bookings, setBookings] = useState([]);
-    const [loading, setLoading] = useState(true);
+function CustomerPage() {
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const [user, setUser] = useState(null);
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        fetchBookings();
-    }, []);
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-    const fetchBookings = async () => {
-        try {
-            const res = await axiosInstance.get('/booking/my');
-            if (res.data.success) {
-                setBookings(res.data.bookings);
-            }
-        } catch (error) {
-            console.error("Failed to fetch bookings", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+  const fetchData = async () => {
+    try {
+      const [userRes, bookingsRes] = await Promise.all([
+        axiosInstance.get("/auth/profile"),
+        axiosInstance.get("/booking/my"),
+      ]);
+      setUser(userRes.data.user);
+      setBookings(bookingsRes.data.bookings || []);
+    } catch (error) {
+      console.error("Failed to fetch data", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const getStatusIcon = (status) => {
-        switch (status) {
-            case 'pending': return <Clock className="h-5 w-5 text-yellow-500" />;
-            case 'accepted': return <Truck className="h-5 w-5 text-blue-500" />;
-            case 'picked': return <Package className="h-5 w-5 text-purple-500" />;
-            case 'delivered': return <CheckCircle className="h-5 w-5 text-green-500" />;
-            default: return <Clock className="h-5 w-5" />;
-        }
-    };
+  const tabs = [
+    { id: "dashboard", label: "Dashboard", icon: "📊" },
+    { id: "bookings", label: "My Bookings", icon: "📦" },
+    { id: "profile", label: "Profile", icon: "👤" },
+  ];
 
-    return (
-        <div className="max-w-7xl mx-auto px-4 py-8">
-            <div className="flex justify-between items-center mb-8">
-                <h1 className="text-3xl font-bold">My Dashboard</h1>
-                <Link to="/booking">
-                    <Button>+ New Booking</Button>
-                </Link>
-            </div>
-
-            {loading ? (
-                <div>Loading...</div>
-            ) : bookings.length === 0 ? (
-                <div className="text-center py-12">
-                    <Package className="h-16 w-16 mx-auto text-gray-400" />
-                    <h2 className="text-xl font-semibold mt-4">No bookings yet</h2>
-                    <p className="text-gray-500 mt-2">Book your first move today!</p>
-                    <Link to="/booking">
-                        <Button className="mt-4">Book Now</Button>
-                    </Link>
-                </div>
-            ) : (
-                <div className="space-y-4">
-                    {bookings.map((booking) => (
-                        <div key={booking._id} className="border rounded-lg p-6 bg-white shadow-sm">
-                            <div className="flex justify-between items-start">
-                                <div className="space-y-2">
-                                    <div className="flex items-center gap-2">
-                                        {getStatusIcon(booking.status)}
-                                        <span className="font-semibold capitalize">{booking.status}</span>
-                                    </div>
-                                    <p className="text-sm text-gray-600">
-                                        <strong>Service:</strong> {booking.serviceType}
-                                    </p>
-                                    <p className="text-sm text-gray-600">
-                                        <strong>From:</strong> {booking.pickupAddress}
-                                    </p>
-                                    <p className="text-sm text-gray-600">
-                                        <strong>To:</strong> {booking.dropAddress}
-                                    </p>
-                                    <p className="text-sm text-gray-600">
-                                        <strong>Date:</strong> {new Date(booking.movingDate).toLocaleDateString()}
-                                    </p>
-                                    {booking.driver && (
-                                        <p className="text-sm text-gray-600">
-                                            <strong>Driver:</strong> {booking.driver.name} ({booking.driver.phone})
-                                        </p>
-                                    )}
-                                </div>
-                                <div className="text-right">
-                                    <p className="text-2xl font-bold text-blue-600">AED {booking.price}</p>
-                                    <p className="text-xs text-gray-500">
-                                        {new Date(booking.createdAt).toLocaleDateString()}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
+  return (
+    <div className="min-h-screen bg-gradient-soft">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Page Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold font-display text-gradient">
+            Welcome{user ? `, ${user.name}` : ""}
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Manage your moves and bookings from one place
+          </p>
         </div>
-    );
+
+        {/* Tab Navigation */}
+        <div className="flex gap-1 p-1 bg-secondary rounded-xl mb-8 w-fit">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                activeTab === tab.id
+                  ? "bg-background text-foreground shadow-soft"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <span className="mr-2">{tab.icon}</span>
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Tab Content */}
+        <div className="animate-float-up">
+          {activeTab === "dashboard" && (
+            <CustomerDashboard
+              bookings={bookings}
+              loading={loading}
+              onRefresh={fetchData}
+            />
+          )}
+          {activeTab === "bookings" && (
+            <CustomerBookings
+              bookings={bookings}
+              loading={loading}
+              onRefresh={fetchData}
+            />
+          )}
+          {activeTab === "profile" && (
+            <CustomerProfile user={user} onRefresh={fetchData} />
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
