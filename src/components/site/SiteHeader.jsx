@@ -2,34 +2,59 @@ import { Link } from "@tanstack/react-router";
 import { Truck, Globe, Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
-  const [lang, setLang] = useState("EN");
+  const { t, i18n } = useTranslation();
+
   const [role, setRole] = useState(
     typeof window !== "undefined" ? localStorage.getItem("role") : null
   );
 
-  // Jab bhi login/logout ho, role update karo
+  // Sync role across tabs and same tab (custom event)
   useEffect(() => {
     const syncRole = () => {
       setRole(localStorage.getItem("role"));
     };
-    // Browser ka built-in storage event (different tabs ke liye)
+
     window.addEventListener("storage", syncRole);
-    // Same tab ke liye custom event (login.jsx already dispatch karta hai)
-    window.addEventListener("storage", syncRole);
+    window.addEventListener("roleChange", syncRole);
+
     return () => {
       window.removeEventListener("storage", syncRole);
+      window.removeEventListener("roleChange", syncRole);
     };
   }, []);
 
+  // Set initial language and direction from localStorage
+  useEffect(() => {
+    const savedLang = localStorage.getItem("language");
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+    }
+    document.documentElement.dir = i18n.language === "ar" ? "rtl" : "ltr";
+    document.documentElement.lang = i18n.language;
+  }, [i18n]);
+
+  const changeLanguage = () => {
+    const newLang = i18n.language === "en" ? "ar" : "en";
+    i18n.changeLanguage(newLang);
+    localStorage.setItem("language", newLang);
+    document.documentElement.lang = newLang;
+    document.documentElement.dir = newLang === "ar" ? "rtl" : "ltr";
+  };
+
   const nav = [
-    { to: "/", label: "Home" },
-    { to: "/booking", label: "Book Now" },
-    ...(role === "admin" ? [{ to: "/admin", label: "Admin" }] : []),
-    ...(role === "customer" ? [{ to: "/Customer", label: "Dashboard" }] : []),
-    ...(role === "driver" ? [{ to: "/Driver", label: "Driver Dashboard" }] : []),
+    { to: "/", label: t("navbar.home") },
+    { to: "/booking", label: t("navbar.booking") },
+    ...(role === "admin" ? [{ to: "/admin", label: t("navbar.admin") }] : []),
+    ...(role === "customer"
+      ? [{ to: "/Customer", label: t("navbar.dashboard") }]
+      : []),
+    ...(role === "driver"
+      ? [{ to: "/Driver", label: t("navbar.driverDashboard") }]
+      : []),
   ];
 
   return (
@@ -40,11 +65,15 @@ export function SiteHeader() {
             <Truck className="h-5 w-5 text-primary-foreground" />
           </div>
           <span className="font-display font-bold text-lg tracking-tight">
-            MoveMate<span className="text-primary">.ae</span>
+            {i18n.language === "ar" ? "موف ميت" : "MoveMate"}
+            <span className="text-primary">.ae</span>
           </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-1">
+        <nav
+          className={`hidden md:flex items-center gap-1 ${i18n.language === "ar" ? "flex-row-reverse" : ""
+            }`}
+        >
           {nav.map((n) => (
             <Link
               key={n.to}
@@ -63,39 +92,60 @@ export function SiteHeader() {
 
         <div className="hidden md:flex items-center gap-2">
           <button
-            onClick={() => setLang(lang === "EN" ? "AR" : "EN")}
+            onClick={changeLanguage}
             className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
           >
-            <Globe className="h-4 w-4" /> {lang}
+            <Globe className="h-4 w-4" />
+            {i18n.language === "en" ? "AR" : "EN"}
           </button>
+
           {role ? (
-            <Link to={role === "admin" ? "/admin" : role === "driver" ? "/Driver" : "/Customer"}>
+            <Link
+              to={
+                role === "admin"
+                  ? "/admin"
+                  : role === "driver"
+                    ? "/Driver"
+                    : "/Customer"
+              }
+            >
               <Button variant="outline" size="sm">
-                Dashboard
+                {t("navbar.dashboard")}
               </Button>
             </Link>
           ) : (
             <Link to="/login">
               <Button variant="outline" size="sm">
-                Sign in
+                {t("navbar.signin")}
               </Button>
             </Link>
           )}
+
           <Link to="/booking">
-            <Button size="sm" className="bg-gradient-primary hover:opacity-90 shadow-soft">
-              Book Now
+            <Button
+              size="sm"
+              className="bg-gradient-primary hover:opacity-90 shadow-soft"
+            >
+              {t("navbar.booking")}
             </Button>
           </Link>
         </div>
 
-        <button className="md:hidden p-2" onClick={() => setOpen(!open)} aria-label="Menu">
+        <button
+          className="md:hidden p-2"
+          onClick={() => setOpen(!open)}
+          aria-label="Menu"
+        >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
       {open && (
         <div className="md:hidden border-t border-border bg-background animate-float-up">
-          <div className="px-4 py-3 flex flex-col gap-1">
+          <div
+            className={`px-4 py-3 flex flex-col gap-1 ${i18n.language === "ar" ? "text-right" : "text-left"
+              }`}
+          >
             {nav.map((n) => (
               <Link
                 key={n.to}
@@ -106,13 +156,20 @@ export function SiteHeader() {
                 {n.label}
               </Link>
             ))}
+
             {role ? (
               <Link
-                to={role === "admin" ? "/admin" : role === "driver" ? "/Driver" : "/Customer"}
+                to={
+                  role === "admin"
+                    ? "/admin"
+                    : role === "driver"
+                      ? "/Driver"
+                      : "/Customer"
+                }
                 onClick={() => setOpen(false)}
                 className="px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-secondary"
               >
-                Dashboard
+                {t("navbar.dashboard")}
               </Link>
             ) : (
               <Link
@@ -120,11 +177,25 @@ export function SiteHeader() {
                 onClick={() => setOpen(false)}
                 className="px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-secondary"
               >
-                Sign in
+                {t("navbar.signin")}
               </Link>
             )}
+
+            <button
+              onClick={() => {
+                changeLanguage();
+                setOpen(false);
+              }}
+              className="px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-secondary flex items-center gap-2"
+            >
+              <Globe className="h-4 w-4" />
+              {i18n.language === "en" ? "العربية" : "English"}
+            </button>
+
             <Link to="/booking" onClick={() => setOpen(false)}>
-              <Button className="w-full mt-2 bg-gradient-primary">Book Now</Button>
+              <Button className="w-full mt-2 bg-gradient-primary">
+                {t("navbar.booking")}
+              </Button>
             </Link>
           </div>
         </div>

@@ -5,12 +5,14 @@ import { Phone, Mail, Star, Plus, MoreHorizontal, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/admin/admin/employees")({
     component: EmployeesPage,
 });
 
 function EmployeesPage() {
+    const { t } = useTranslation();
     const [employees, setEmployees] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -48,7 +50,7 @@ function EmployeesPage() {
         try {
             const res = await axiosInstance.post("/auth/register", { ...formData, role: "driver" });
             if (res.data.success) {
-                toast.success("Employee added successfully!");
+                toast.success(t("admin.employeesPage.employeeAdded"));
                 setIsModalOpen(false);
                 setFormData({ name: "", email: "", phone: "", password: "", vehicleType: "", vehicleNumber: "", licenseNumber: "" });
                 fetchDrivers();
@@ -63,7 +65,7 @@ function EmployeesPage() {
     if (loading) {
         return (
             <div className="p-5 text-center text-muted-foreground">
-                Loading employees...
+                {t("admin.employeesPage.loadingEmployees")}
             </div>
         );
     }
@@ -73,15 +75,15 @@ function EmployeesPage() {
             <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
                     <h1 className="text-2xl sm:text-3xl font-bold font-display">
-                        Employees
+                        {t("admin.employeesPage.title")}
                     </h1>
                     <p className="text-muted-foreground mt-1">
-                        Manage your moving crew.
+                        {t("admin.employeesPage.subtitle")}
                     </p>
                 </div>
 
                 <Button className="bg-gradient-primary" onClick={() => setIsModalOpen(true)}>
-                    <Plus className="h-4 w-4 mr-1.5" /> Add Employee
+                    <Plus className="h-4 w-4 mr-1.5" /> {t("admin.employeesPage.addEmployee")}
                 </Button>
             </div>
 
@@ -115,7 +117,7 @@ function EmployeesPage() {
                         <div className="mt-4 space-y-2 text-xs text-muted-foreground">
                             <div className="flex items-center gap-2">
                                 <Phone className="h-3.5 w-3.5" />
-                                {e.phone || "No phone"}
+                                {e.phone || t("admin.employeesPage.noPhone")}
                             </div>
 
                             <div className="flex items-center gap-2">
@@ -127,12 +129,12 @@ function EmployeesPage() {
                         {/* FOOTER */}
                         <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
                             <div>
-                                <div className="text-xs text-muted-foreground">Moves</div>
+                                <div className="text-xs text-muted-foreground">{t("admin.employeesPage.moves")}</div>
                                 <div className="font-semibold">{e.moves || 0}</div>
                             </div>
 
                             <div>
-                                <div className="text-xs text-muted-foreground">Rating</div>
+                                <div className="text-xs text-muted-foreground">{t("admin.employeesPage.rating")}</div>
                                 <div className="font-semibold flex items-center gap-1">
                                     <Star className="h-3.5 w-3.5 fill-warning text-warning" />
                                     {e.rating || 5.0}
@@ -145,7 +147,7 @@ function EmployeesPage() {
                                     : "bg-muted text-muted-foreground border-border"
                                     }`}
                             >
-                                {e.isAvailable ? "Available" : "On Job"}
+                                {e.isAvailable ? t("admin.employeesPage.available") : t("admin.employeesPage.onJob")}
                             </span>
                         </div>
                     </div>
@@ -157,7 +159,7 @@ function EmployeesPage() {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
                     <div className="bg-white rounded-2xl w-full max-w-md shadow-lg overflow-hidden animate-in fade-in zoom-in duration-200">
                         <div className="flex justify-between items-center p-4 border-b">
-                            <h2 className="text-lg font-bold">Add New Employee (Driver)</h2>
+                            <h2 className="text-lg font-bold">{t("admin.employeesPage.addTitle")}</h2>
                             <button onClick={() => setIsModalOpen(false)} className="p-1 hover:bg-gray-100 rounded-full">
                                 <X className="w-5 h-5" />
                             </button>
@@ -165,36 +167,36 @@ function EmployeesPage() {
                         <form onSubmit={handleAddEmployee} className="p-4 space-y-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1">
-                                    <label className="text-xs font-medium">Full Name*</label>
+                                    <label className="text-xs font-medium">{t("admin.employeesPage.fullName")}</label>
                                     <Input name="name" value={formData.name} onChange={handleChange} required placeholder="John Doe" />
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="text-xs font-medium">Email*</label>
+                                    <label className="text-xs font-medium">{t("admin.employeesPage.email")}</label>
                                     <Input type="email" name="email" value={formData.email} onChange={handleChange} required placeholder="john@example.com" />
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="text-xs font-medium">Phone*</label>
+                                    <label className="text-xs font-medium">{t("admin.employeesPage.phone")}</label>
                                     <Input name="phone" value={formData.phone} onChange={handleChange} required placeholder="+971 50 XXX XXXX" />
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="text-xs font-medium">Password*</label>
+                                    <label className="text-xs font-medium">{t("admin.employeesPage.password")}</label>
                                     <Input type="password" name="password" value={formData.password} onChange={handleChange} required placeholder="••••••••" />
                                 </div>
                             </div>
 
                             <div className="border-t pt-4 mt-2">
-                                <h3 className="text-xs font-bold text-gray-500 uppercase mb-3">Vehicle Details (Required)</h3>
+                                <h3 className="text-xs font-bold text-gray-500 uppercase mb-3">{t("admin.employeesPage.vehicleDetails")}</h3>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-1">
-                                        <label className="text-xs font-medium">Vehicle Type*</label>
+                                        <label className="text-xs font-medium">{t("admin.employeesPage.vehicleType")}</label>
                                         <Input name="vehicleType" value={formData.vehicleType} onChange={handleChange} required placeholder="e.g. 3-Ton Truck" />
                                     </div>
                                     <div className="space-y-1">
-                                        <label className="text-xs font-medium">Vehicle Number*</label>
+                                        <label className="text-xs font-medium">{t("admin.employeesPage.vehicleNumber")}</label>
                                         <Input name="vehicleNumber" value={formData.vehicleNumber} onChange={handleChange} required placeholder="e.g. D-12345" />
                                     </div>
                                     <div className="col-span-2 space-y-1">
-                                        <label className="text-xs font-medium">License Number*</label>
+                                        <label className="text-xs font-medium">{t("admin.employeesPage.licenseNumber")}</label>
                                         <Input name="licenseNumber" value={formData.licenseNumber} onChange={handleChange} required placeholder="e.g. LIC-987654" />
                                     </div>
                                 </div>
@@ -202,10 +204,10 @@ function EmployeesPage() {
 
                             <div className="pt-4 flex justify-end gap-2">
                                 <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)}>
-                                    Cancel
+                                    {t("common.cancel")}
                                 </Button>
                                 <Button type="submit" disabled={adding}>
-                                    {adding ? "Adding..." : "Add Employee"}
+                                    {adding ? t("admin.employeesPage.adding") : t("admin.employeesPage.addEmployee")}
                                 </Button>
                             </div>
                         </form>

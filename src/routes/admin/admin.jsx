@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
 import { axiosInstance } from "@/lib/axios";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/admin/admin")({
   beforeLoad: () => {
@@ -40,17 +41,20 @@ export const Route = createFileRoute("/admin/admin")({
   component: AdminLayout,
 });
 
-const nav = [
-  { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { to: "/admin/bookings", label: "Bookings", icon: ClipboardList },
-  { to: "/admin/employees", label: "Employees", icon: Users },
-];
+// nav is defined inside the component to access t()
 
 function AdminLayout() {
+  const { t, i18n } = useTranslation();
   const pathname = useRouterState({
     select: (s) => s.location.pathname || "",
   });
   const navigate = useNavigate();
+
+  const nav = [
+    { to: "/admin", label: t("admin.sidebar.dashboard"), icon: LayoutDashboard, exact: true },
+    { to: "/admin/bookings", label: t("admin.sidebar.bookings"), icon: ClipboardList },
+    { to: "/admin/employees", label: t("admin.sidebar.employees"), icon: Users },
+  ];
 
   const [admin, setAdmin] = useState(null);
   const [notifications, setNotifications] = useState([]);
@@ -93,23 +97,23 @@ function AdminLayout() {
           const list = bookingsData.map((b) => {
             let title = "";
             let desc = "";
-            let type = "info"; // info, warning, success
+            let type = "info";
 
             if (b.status === "pending") {
-              title = "New Booking Request";
-              desc = `${b.customer?.name || "Customer"} requested ${b.serviceType}.`;
+              title = t("admin.newBookingRequest");
+              desc = `${b.customer?.name || t("admin.customer")} ${t("admin.requested")} ${b.serviceType}.`;
               type = "warning";
             } else if (b.status === "accepted") {
-              title = "Booking Accepted";
-              desc = `Booking for ${b.customer?.name || "Customer"} is accepted.`;
+              title = t("admin.bookingAccepted");
+              desc = `${b.customer?.name || t("admin.customer")} ${t("admin.isAccepted")}.`;
               type = "info";
             } else if (b.status === "delivered" || b.status === "completed") {
-              title = "Booking Completed";
-              desc = `Job successfully completed by driver.`;
+              title = t("admin.bookingCompleted");
+              desc = t("admin.jobCompleted");
               type = "success";
             } else {
-              title = "Status Update";
-              desc = `Booking status is now ${b.status}.`;
+              title = t("admin.statusUpdate");
+              desc = `${t("admin.statusNow")} ${b.status}.`;
               type = "info";
             }
 
@@ -170,7 +174,7 @@ function AdminLayout() {
           <div className="h-9 w-9 rounded-xl bg-gradient-primary grid place-items-center">
             <Truck className="h-5 w-5 text-primary-foreground" />
           </div>
-          <span className="font-display font-bold text-foreground">MoveMate</span>
+          <span className="font-display font-bold text-foreground">{i18n.language === "ar" ? "موف ميت" : "MoveMate"}</span>
         </Link>
 
         <nav className="flex-1 p-4 space-y-1">
@@ -206,7 +210,7 @@ function AdminLayout() {
             }}
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-sidebar-foreground/70 hover:bg-sidebar-accent w-full cursor-pointer"
           >
-            <LogOut className="h-4 w-4" /> Sign out
+            <LogOut className="h-4 w-4" /> {t("admin.signOut")}
           </button>
         </div>
       </aside>
@@ -219,7 +223,7 @@ function AdminLayout() {
             <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
-                placeholder="Search bookings, customers..."
+                placeholder={t("admin.searchPlaceholder")}
                 className="w-full h-10 pl-10 pr-4 rounded-lg bg-secondary/60 border border-transparent focus:border-border focus:bg-background outline-none text-sm"
               />
             </div>
@@ -241,20 +245,20 @@ function AdminLayout() {
               {showNotifications && (
                 <div className="absolute right-0 mt-2 w-80 bg-card rounded-2xl border border-border shadow-elegant z-50 p-4 space-y-3 animate-fade-in">
                   <div className="flex justify-between items-center pb-2 border-b border-border">
-                    <h3 className="font-semibold text-sm font-display">Notifications</h3>
+                    <h3 className="font-semibold text-sm font-display">{t("admin.notifications")}</h3>
                     {unreadCount > 0 && (
                       <button
                         onClick={markAllAsRead}
                         className="text-xs text-primary hover:underline font-semibold"
                       >
-                        Mark all read
+                        {t("admin.markAllRead")}
                       </button>
                     )}
                   </div>
                   <div className="max-h-64 overflow-y-auto space-y-2 pr-1">
                     {notifications.length === 0 ? (
                       <div className="text-center py-6 text-xs text-muted-foreground">
-                        No new notifications
+                        {t("admin.noNotifications")}
                       </div>
                     ) : (
                       notifications.map((n) => (
@@ -321,7 +325,7 @@ function AdminLayout() {
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground px-2">
                       <Shield className="h-3.5 w-3.5 text-primary" />
-                      <span className="capitalize">{admin?.role || "Admin"} Access</span>
+                      <span className="capitalize">{admin?.role || "Admin"} {t("admin.access")}</span>
                     </div>
                     {admin?.phone && (
                       <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground px-2">
@@ -335,7 +339,7 @@ function AdminLayout() {
                     onClick={handleSignOut}
                     className="flex items-center justify-center gap-2 w-full py-2 rounded-xl text-xs font-bold text-destructive hover:bg-destructive/10 border border-destructive/20 transition-colors"
                   >
-                    <LogOut className="h-4 w-4" /> Sign Out
+                    <LogOut className="h-4 w-4" /> {t("admin.signOut")}
                   </button>
                 </div>
               )}

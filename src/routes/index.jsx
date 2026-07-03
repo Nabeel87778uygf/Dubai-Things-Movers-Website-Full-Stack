@@ -9,13 +9,13 @@ import {
   Clock,
   Star,
   CheckCircle2,
-  MapPin,
   Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroImg from "@/assets/hero-moving.jpg";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -38,84 +38,30 @@ function ChangeMapView({ center, zoom }) {
   return null;
 }
 
-const services = [
-  {
-    icon: Home,
-    title: "Home Shifting",
-    desc: "Apartment, villa & studio relocations across Dubai with full-service packing.",
-    color: "text-primary",
-  },
-  {
-    icon: Building2,
-    title: "Office Relocation",
-    desc: "Minimal downtime office moves — IT, furniture, and confidential files.",
-    color: "text-success",
-  },
-  {
-    icon: Sofa,
-    title: "Furniture Moving",
-    desc: "Single piece or full suite. Disassembly, transport and reassembly.",
-    color: "text-primary",
-  },
-  {
-    icon: Package,
-    title: "Packing Services",
-    desc: "Premium materials, expert packers, fragile-item specialists.",
-    color: "text-success",
-  },
+const servicesList = [
+  { icon: Home, key: "home", color: "text-primary" },
+  { icon: Building2, key: "office", color: "text-success" },
+  { icon: Sofa, key: "furniture", color: "text-primary" },
+  { icon: Package, key: "packing", color: "text-success" },
 ];
 
-const steps = [
-  {
-    n: "01",
-    title: "Book Online",
-    desc: "Fill the simple form with your move details in under 60 seconds.",
-  },
-  {
-    n: "02",
-    title: "Get a Quote",
-    desc: "Our team reviews and confirms a transparent, all-inclusive price.",
-  },
-  {
-    n: "03",
-    title: "Relax & Move",
-    desc: "Our insured crew handles everything door-to-door, on schedule.",
-  },
-];
+const stepsList = [0, 1, 2];
 
-const testimonials = [
-  {
-    name: "Aisha Khan",
-    role: "Marina Resident",
-    text: "Smoothest move I've ever had in Dubai. The team was on time, careful and friendly.",
-    rating: 5,
-  },
-  {
-    name: "Omar Al Farsi",
-    role: "Office Manager",
-    text: "Relocated 40 staff over a weekend. Zero downtime Monday morning. Highly recommended.",
-    rating: 5,
-  },
-  {
-    name: "Priya Sharma",
-    role: "JLT Resident",
-    text: "Packed my fragile artwork like museum pros. Worth every dirham.",
-    rating: 5,
-  },
-];
+const testimonialsList = [0, 1, 2];
 
 const locations = [
-  { name: "Downtown Dubai", coords: [25.1972, 55.2744] },
-  { name: "JLT & Marina", coords: [25.0800, 55.1400] },
-  { name: "Business Bay", coords: [25.1860, 55.2630] },
-  { name: "Palm Jumeirah", coords: [25.1124, 55.1390] },
-  { name: "Abu Dhabi", coords: [24.4539, 54.3773] },
-  { name: "Sharjah", coords: [25.3463, 55.4209] },
-  { name: "Ajman", coords: [25.4052, 55.5136] },
-  { name: "Al Ain", coords: [24.2075, 55.7447] },
+  { nameKey: "downtown", coords: [25.1972, 55.2744] },
+  { nameKey: "jlt", coords: [25.0800, 55.1400] },
+  { nameKey: "businessBay", coords: [25.1860, 55.2630] },
+  { nameKey: "palm", coords: [25.1124, 55.1390] },
+  { nameKey: "abuDhabi", coords: [24.4539, 54.3773] },
+  { nameKey: "sharjah", coords: [25.3463, 55.4209] },
+  { nameKey: "ajman", coords: [25.4052, 55.5136] },
+  { nameKey: "alAin", coords: [24.2075, 55.7447] },
 ];
 
 function Index() {
+  const { t, i18n } = useTranslation();
   const [openMap, setOpenMap] = useState(false);
 
   const [mapCenter, setMapCenter] = useState([24.6, 54.7]);
@@ -132,15 +78,23 @@ function Index() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-16 pb-20 lg:pt-24 lg:pb-28 grid lg:grid-cols-2 gap-12 items-center">
           <div className="animate-float-up">
             <div className="inline-flex items-center gap-2 rounded-full bg-accent/60 px-3 py-1.5 text-xs font-medium text-accent-foreground mb-6">
-              <Sparkles className="h-3.5 w-3.5" /> Dubai's #1 rated moving company
+              <Sparkles className="h-3.5 w-3.5" /> {t("hero.badge")}
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight">
-              Fast & Reliable <br />
-              <span className="text-gradient">Moving Services</span> <br /> in Dubai
+              {i18n.language === "ar" ? (
+                <>
+                  خدمات نقل <br />
+                  <span className="text-gradient">سريعة وموثوقة</span> <br /> في دبي
+                </>
+              ) : (
+                <>
+                  Fast & Reliable <br />
+                  <span className="text-gradient">Moving Services</span> <br /> in Dubai
+                </>
+              )}
             </h1>
             <p className="mt-6 text-lg text-muted-foreground max-w-xl leading-relaxed">
-              From cozy studios in JLT to corporate towers in DIFC — our insured movers deliver a
-              stress-free, premium relocation experience across the UAE.
+              {t("hero.subtitle")}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/booking">
@@ -148,20 +102,21 @@ function Index() {
                   size="lg"
                   className="bg-gradient-primary hover:opacity-90 shadow-elegant text-base h-12 px-7"
                 >
-                  Book Your Move Now <ArrowRight className="ml-1 h-4 w-4" />
+                  {t("hero.bookNow")}{" "}
+                  <ArrowRight className={`ml-1 h-4 w-4 ${i18n.language === "ar" ? "rotate-180" : ""}`} />
                 </Button>
               </Link>
               <a href="#services">
                 <Button size="lg" variant="outline" className="h-12 px-7 text-base">
-                  View Services
+                  {t("hero.viewServices")}
                 </Button>
               </a>
             </div>
             <div className="mt-10 grid grid-cols-3 gap-6 max-w-md">
               {[
-                { v: "10K+", l: "Moves done" },
-                { v: "4.9★", l: "Rating" },
-                { v: "100%", l: "Insured" },
+                { v: "10K+", l: t("hero.movesDone") },
+                { v: "4.9★", l: t("hero.rating") },
+                { v: "100%", l: t("hero.insured") },
               ].map((s) => (
                 <div key={s.l}>
                   <div className="text-2xl font-bold font-display">{s.v}</div>
@@ -181,22 +136,30 @@ function Index() {
                 className="w-full h-auto object-cover"
               />
             </div>
-            <div className="absolute -bottom-6 -left-6 bg-card rounded-2xl shadow-card p-4 flex items-center gap-3 border border-border">
+            <div
+              className={`absolute -bottom-6 bg-card rounded-2xl shadow-card p-4 flex items-center gap-3 border border-border ${
+                i18n.language === "ar" ? "-right-6" : "-left-6"
+              }`}
+            >
               <div className="h-10 w-10 rounded-xl bg-success/15 grid place-items-center">
                 <Shield className="h-5 w-5 text-success" />
               </div>
               <div>
-                <div className="font-semibold text-sm">Fully Insured</div>
-                <div className="text-xs text-muted-foreground">Every move covered</div>
+                <div className="font-semibold text-sm">{t("hero.fullyInsured")}</div>
+                <div className="text-xs text-muted-foreground">{t("hero.everyMoveCovered")}</div>
               </div>
             </div>
-            <div className="absolute -top-4 -right-4 bg-card rounded-2xl shadow-card p-4 flex items-center gap-3 border border-border">
+            <div
+              className={`absolute -top-4 bg-card rounded-2xl shadow-card p-4 flex items-center gap-3 border border-border ${
+                i18n.language === "ar" ? "-left-4" : "-right-4"
+              }`}
+            >
               <div className="h-10 w-10 rounded-xl bg-primary/15 grid place-items-center">
                 <Clock className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <div className="font-semibold text-sm">On-time</div>
-                <div className="text-xs text-muted-foreground">98% punctuality</div>
+                <div className="font-semibold text-sm">{t("hero.onTime")}</div>
+                <div className="text-xs text-muted-foreground">{t("hero.punctuality")}</div>
               </div>
             </div>
           </div>
@@ -208,19 +171,19 @@ function Index() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mb-14">
             <div className="text-sm font-semibold text-primary uppercase tracking-wider mb-3">
-              Our Services
+              {t("services.tag")}
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold">
-              Everything you need to move
+              {t("services.title")}
             </h2>
             <p className="mt-4 text-muted-foreground text-lg">
-              Tailored relocation packages built for Dubai's pace.
+              {t("services.desc")}
             </p>
           </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {services.map((s, i) => (
+            {servicesList.map((s, i) => (
               <div
-                key={s.title}
+                key={s.key}
                 className="group relative rounded-2xl border border-border bg-card p-6 shadow-soft hover:shadow-card hover:-translate-y-1 transition-all duration-300 animate-float-up"
                 style={{ animationDelay: `${i * 0.08}s` }}
               >
@@ -231,13 +194,18 @@ function Index() {
                     className={`h-6 w-6 ${s.color} group-hover:text-primary-foreground transition-colors`}
                   />
                 </div>
-                <h3 className="font-display font-semibold text-lg">{s.title}</h3>
-                <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
+                <h3 className="font-display font-semibold text-lg">
+                  {t(`services.items.${s.key}.title`)}
+                </h3>
+                <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                  {t(`services.items.${s.key}.desc`)}
+                </p>
                 <Link
                   to="/booking"
                   className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:gap-2 transition-all"
                 >
-                  Book now <ArrowRight className="h-3.5 w-3.5" />
+                  {t("services.bookNow")}{" "}
+                  <ArrowRight className={`h-3.5 w-3.5 ${i18n.language === "ar" ? "rotate-180" : ""}`} />
                 </Link>
               </div>
             ))}
@@ -250,23 +218,35 @@ function Index() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mx-auto text-center mb-14">
             <div className="text-sm font-semibold text-primary uppercase tracking-wider mb-3">
-              How it works
+              {t("howItWorks.tag")}
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold">
-              Move in three simple steps
+              {t("howItWorks.title")}
             </h2>
           </div>
           <div className="grid gap-6 md:grid-cols-3 relative">
-            {steps.map((step, i) => (
+            {stepsList.map((stepIndex, i) => (
               <div
-                key={step.n}
+                key={stepIndex}
                 className="relative rounded-2xl bg-card border border-border p-8 shadow-soft hover:shadow-card transition-shadow"
               >
-                <div className="text-5xl font-display font-bold text-gradient mb-4">{step.n}</div>
-                <h3 className="font-display font-semibold text-xl mb-2">{step.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{step.desc}</p>
-                {i < steps.length - 1 && (
-                  <ArrowRight className="hidden md:block absolute top-1/2 -right-5 h-6 w-6 text-primary/40" />
+                <div className="text-5xl font-display font-bold text-gradient mb-4">
+                  {t(`howItWorks.steps.${stepIndex}.n`)}
+                </div>
+                <h3 className="font-display font-semibold text-xl mb-2">
+                  {t(`howItWorks.steps.${stepIndex}.title`)}
+                </h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  {t(`howItWorks.steps.${stepIndex}.desc`)}
+                </p>
+                {i < stepsList.length - 1 && (
+                  <ArrowRight
+                    className={`hidden md:block absolute top-1/2 h-6 w-6 text-primary/40 ${
+                      i18n.language === "ar"
+                        ? "-left-5 rotate-180"
+                        : "-right-5"
+                    }`}
+                  />
                 )}
               </div>
             ))}
@@ -280,20 +260,19 @@ function Index() {
           {/* LEFT SIDE TEXT */}
           <div>
             <div className="text-sm font-semibold text-primary uppercase tracking-wider mb-3">
-              Coverage
+              {t("coverage.tag")}
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold">
-              We move across all 7 Emirates
+              {t("coverage.title")}
             </h2>
             <p className="mt-4 text-muted-foreground text-lg">
-              From Dubai Marina to Abu Dhabi Corniche — wherever you go, we go.
+              {t("coverage.desc")}
             </p>
 
-            {/* Updated cities list with click functionality */}
             <ul className="mt-6 grid grid-cols-2 gap-3">
               {locations.map((city) => (
                 <li
-                  key={city.name}
+                  key={city.nameKey}
                   onClick={() => {
                     setMapCenter(city.coords);
                     setMapZoom(13);
@@ -301,7 +280,7 @@ function Index() {
                   className="flex items-center gap-2 text-sm cursor-pointer hover:text-primary transition-colors"
                 >
                   <CheckCircle2 className="h-4 w-4 text-success" />
-                  {city.name}
+                  {t(`cities.${city.nameKey}`)}
                 </li>
               ))}
             </ul>
@@ -312,7 +291,6 @@ function Index() {
             onClick={() => setOpenMap(true)}
             className="cursor-pointer rounded-3xl overflow-hidden shadow-card border border-border bg-card aspect-[4/3]"
           >
-            {/* Updated MapContainer with dynamic center and zoom */}
             <MapContainer
               center={mapCenter}
               zoom={mapZoom}
@@ -322,28 +300,28 @@ function Index() {
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
               <Marker position={[25.0800, 55.1400]}>
-                <Popup>Dubai Marina</Popup>
+                <Popup>{t("cities.jlt")}</Popup>
               </Marker>
               <Marker position={[25.1972, 55.2744]}>
-                <Popup>Downtown Dubai</Popup>
+                <Popup>{t("cities.downtown")}</Popup>
               </Marker>
               <Marker position={[25.1860, 55.2630]}>
-                <Popup>Business Bay</Popup>
+                <Popup>{t("cities.businessBay")}</Popup>
               </Marker>
               <Marker position={[25.1124, 55.1390]}>
-                <Popup>Palm Jumeirah</Popup>
+                <Popup>{t("cities.palm")}</Popup>
               </Marker>
               <Marker position={[24.4539, 54.3773]}>
-                <Popup>Abu Dhabi</Popup>
+                <Popup>{t("cities.abuDhabi")}</Popup>
               </Marker>
               <Marker position={[25.3463, 55.4209]}>
-                <Popup>Sharjah</Popup>
+                <Popup>{t("cities.sharjah")}</Popup>
               </Marker>
               <Marker position={[25.4052, 55.5136]}>
-                <Popup>Ajman</Popup>
+                <Popup>{t("cities.ajman")}</Popup>
               </Marker>
               <Marker position={[24.2075, 55.7447]}>
-                <Popup>Al Ain</Popup>
+                <Popup>{t("cities.alAin")}</Popup>
               </Marker>
             </MapContainer>
           </div>
@@ -355,30 +333,38 @@ function Index() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mx-auto text-center mb-14">
             <div className="text-sm font-semibold text-primary uppercase tracking-wider mb-3">
-              Testimonials
+              {t("testimonials.tag")}
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold">Loved by Dubai residents</h2>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold">
+              {t("testimonials.title")}
+            </h2>
           </div>
           <div className="grid gap-6 md:grid-cols-3">
-            {testimonials.map((t, i) => (
+            {testimonialsList.map((testIndex, i) => (
               <div
-                key={t.name}
+                key={testIndex}
                 className="rounded-2xl bg-card border border-border p-7 shadow-soft hover:shadow-card transition-shadow animate-float-up"
                 style={{ animationDelay: `${i * 0.08}s` }}
               >
                 <div className="flex gap-0.5 mb-4">
-                  {Array.from({ length: t.rating }).map((_, k) => (
+                  {Array.from({ length: 5 }).map((_, k) => (
                     <Star key={k} className="h-4 w-4 fill-warning text-warning" />
                   ))}
                 </div>
-                <p className="text-foreground leading-relaxed">"{t.text}"</p>
+                <p className="text-foreground leading-relaxed">
+                  "{t(`testimonials.items.${testIndex}.text`)}"
+                </p>
                 <div className="mt-6 flex items-center gap-3 pt-5 border-t border-border">
                   <div className="h-10 w-10 rounded-full bg-gradient-primary grid place-items-center text-primary-foreground font-semibold">
-                    {t.name.charAt(0)}
+                    {t(`testimonials.items.${testIndex}.name`).charAt(0)}
                   </div>
                   <div>
-                    <div className="font-semibold text-sm">{t.name}</div>
-                    <div className="text-xs text-muted-foreground">{t.role}</div>
+                    <div className="font-semibold text-sm">
+                      {t(`testimonials.items.${testIndex}.name`)}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {t(`testimonials.items.${testIndex}.role`)}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -399,17 +385,18 @@ function Index() {
               }}
             />
             <h2 className="relative text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
-              Ready to make your move?
+              {t("cta.title")}
             </h2>
             <p className="relative mt-4 text-white/90 text-lg max-w-xl mx-auto">
-              Get a free quote in 60 seconds. No commitment, no hidden fees.
+              {t("cta.desc")}
             </p>
             <Link to="/booking" className="relative inline-block mt-8">
               <Button
                 size="lg"
                 className="bg-white text-primary hover:bg-white/90 h-12 px-8 text-base font-semibold shadow-elegant"
               >
-                Book Your Move Now <ArrowRight className="ml-1 h-4 w-4" />
+                {t("cta.bookNow")}{" "}
+                <ArrowRight className={`ml-1 h-4 w-4 ${i18n.language === "ar" ? "rotate-180" : ""}`} />
               </Button>
             </Link>
           </div>

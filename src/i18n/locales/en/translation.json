@@ -1,0 +1,228 @@
+{
+    "navbar": {
+        "home": "Home",
+        "booking": "Book Now",
+        "admin": "Admin",
+        "dashboard": "Dashboard",
+        "driverDashboard": "Driver Dashboard",
+        "signin": "Sign In"
+    },
+    "hero": {
+        "badge": "Dubai's #1 rated moving company",
+        "title": "Fast & Reliable Moving Services in Dubai",
+        "subtitle": "From cozy studios in JLT to corporate towers in DIFC — our insured movers deliver a stress-free, premium relocation experience across the UAE.",
+        "bookNow": "Book Your Move Now",
+        "viewServices": "View Services",
+        "movesDone": "Moves done",
+        "rating": "Rating",
+        "insured": "Insured",
+        "fullyInsured": "Fully Insured",
+        "everyMoveCovered": "Every move covered",
+        "onTime": "On-time",
+        "punctuality": "98% punctuality"
+    },
+    "services": {
+        "tag": "Our Services",
+        "title": "Everything you need to move",
+        "desc": "Tailored relocation packages built for Dubai's pace.",
+        "bookNow": "Book now",
+        "items": {
+            "home": {
+                "title": "Home Shifting",
+                "desc": "Apartment, villa & studio relocations across Dubai with full-service packing."
+            },
+            "office": {
+                "title": "Office Relocation",
+                "desc": "Minimal downtime office moves — IT, furniture, and confidential files."
+            },
+            "furniture": {
+                "title": "Furniture Moving",
+                "desc": "Single piece or full suite. Disassembly, transport and reassembly."
+            },
+            "packing": {
+                "title": "Packing Services",
+                "desc": "Premium materials, expert packers, fragile-item specialists."
+            }
+        }
+    },
+    "howItWorks": {
+        "tag": "How it works",
+        "title": "Move in three simple steps",
+        "steps": [
+            {
+                "n": "01",
+                "title": "Book Online",
+                "desc": "Fill the simple form with your move details in under 60 seconds."
+            },
+            {
+                "n": "02",
+                "title": "Get a Quote",
+                "desc": "Our team reviews and confirms a transparent, all-inclusive price."
+            },
+            {
+                "n": "03",
+                "title": "Relax & Move",
+                "desc": "Our insured crew handles everything door-to-door, on schedule."
+            }
+        ]
+    },
+    "coverage": {
+        "tag": "Coverage",
+        "title": "We move across all 7 Emirates",
+        "desc": "From Dubai Marina to Abu Dhabi Corniche — wherever you go, we go.",
+        "hint": "Click on any city to locate on map"
+    },
+    "cities": {
+        "downtown": "Downtown Dubai",
+        "jlt": "JLT & Marina",
+        "businessBay": "Business Bay",
+        "palm": "Palm Jumeirah",
+        "abuDhabi": "Abu Dhabi",
+        "sharjah": "Sharjah",
+        "ajman": "Ajman",
+        "alAin": "Al Ain"
+    },
+    "testimonials": {
+        "tag": "Testimonials",
+        "title": "Loved by Dubai residents",
+        "items": [
+            {
+                "name": "Aisha Khan",
+                "role": "Marina Resident",
+                "text": "Smoothest move I've ever had in Dubai. The team was on time, careful and friendly."
+            },
+            {
+                "name": "Omar Al Farsi",
+                "role": "Office Manager",
+                "text": "Relocated 40 staff over a weekend. Zero downtime Monday morning. Highly recommended."
+            },
+            {
+                "name": "Priya Sharma",
+                "role": "JLT Resident",
+                "text": "Packed my fragile artwork like museum pros. Worth every dirham."
+            }
+        ]
+    },
+    "cta": {
+        "title": "Ready to make your move?",
+        "desc": "Get a free quote in 60 seconds. No commitment, no hidden fees.",
+        "bookNow": "Book Your Move Now"
+    },
+    "booking": {
+        "title": "Book Your Move",
+        "homeShifting": "Home Shifting",
+        "officeRelocation": "Office Relocation",
+        "furnitureMoving": "Furniture Moving",
+        "packingServices": "Packing Services",
+        "from": "From AED",
+        "estimatedPrice": "Estimated Price:",
+        "priceDetails": "*Includes base service + distance (AED 5/km)",
+        "distance": "Distance:",
+        "fullName": "Full Name",
+        "phoneNumber": "Phone Number",
+        "pickupAddress": "Pickup Address",
+        "dropAddress": "Drop Address",
+        "movingDate": "Moving Date",
+        "estimatedItems": "Estimated Items (e.g., 2BR apartment)",
+        "confirmBooking": "Confirm Booking",
+        "bookingConfirmed": "Booking Confirmed!",
+        "bookingSuccessDesc": "Your booking has been submitted successfully.",
+        "driverAssignment": "A driver will be assigned shortly.",
+        "viewMyBookings": "View My Bookings",
+        "pleaseLogin": "Please login first",
+        "bookingCreatedSuccess": "Booking created successfully!"
+    },
+    "footer": {
+        "desc": "Dubai's most trusted moving company. Premium home, office and furniture relocation services with insured handling and on-time delivery.",
+        "services": "Services",
+        "contact": "Contact",
+        "allRightsReserved": "MoveMate.ae — All rights reserved.",
+        "licensed": "Licensed by Dubai DED · Fully Insured"
+    },
+    "common": {
+        "loading": "Loading...",
+        "save": "Save",
+        "cancel": "Cancel",
+        "submit": "Submit"
+    },
+    "admin": {
+        "welcomeBack": "Welcome back, Admin 👋",
+        "todaySummary": "Here's what's happening with your moves today.",
+        "totalBookings": "Total Bookings",
+        "totalRevenue": "Total Revenue",
+        "commission": "Commission (20%)",
+        "customer": "Customer",
+        "service": "Service",
+        "fromTo": "From/To",
+        "price": "Price",
+        "status": "Status",
+        "assignDriver": "Assign Driver",
+        "selectDriver": "Select Driver",
+        "busy": "Busy",
+        "noBookings": "No bookings found.",
+        "driverAssignedSuccess": "Driver assigned successfully",
+        "failedAssign": "Failed to assign driver",
+        "failedFetchBookings": "Failed to fetch bookings",
+        "failedFetchDrivers": "Failed to fetch drivers",
+        "signOut": "Sign out",
+        "searchPlaceholder": "Search bookings, customers...",
+        "notifications": "Notifications",
+        "markAllRead": "Mark all read",
+        "noNotifications": "No new notifications",
+        "newBookingRequest": "New Booking Request",
+        "bookingAccepted": "Booking Accepted",
+        "bookingCompleted": "Booking Completed",
+        "statusUpdate": "Status Update",
+        "requested": "requested",
+        "isAccepted": "is accepted",
+        "jobCompleted": "Job successfully completed by driver.",
+        "statusNow": "Booking status is now",
+        "access": "Access",
+        "sidebar": {
+            "dashboard": "Dashboard",
+            "bookings": "Bookings",
+            "employees": "Employees"
+        },
+        "bookingsPage": {
+            "title": "Bookings",
+            "subtitle": "Manage all customer bookings in one place.",
+            "filter": "Filter",
+            "export": "Export",
+            "all": "All",
+            "pending": "Pending",
+            "accepted": "Accepted",
+            "pickedUp": "Picked Up",
+            "delivered": "Delivered",
+            "cancelled": "Cancelled",
+            "booking": "Booking",
+            "route": "Route",
+            "date": "Date",
+            "actions": "Actions",
+            "from": "From:",
+            "to": "To:",
+            "noBookingsStatus": "No bookings in this status."
+        },
+        "employeesPage": {
+            "title": "Employees",
+            "subtitle": "Manage your moving crew.",
+            "addEmployee": "Add Employee",
+            "loadingEmployees": "Loading employees...",
+            "moves": "Moves",
+            "rating": "Rating",
+            "available": "Available",
+            "onJob": "On Job",
+            "noPhone": "No phone",
+            "addTitle": "Add New Employee (Driver)",
+            "fullName": "Full Name*",
+            "email": "Email*",
+            "phone": "Phone*",
+            "password": "Password*",
+            "vehicleDetails": "Vehicle Details (Required)",
+            "vehicleType": "Vehicle Type*",
+            "vehicleNumber": "Vehicle Number*",
+            "licenseNumber": "License Number*",
+            "adding": "Adding...",
+            "employeeAdded": "Employee added successfully!"
+        }
+    }
+}

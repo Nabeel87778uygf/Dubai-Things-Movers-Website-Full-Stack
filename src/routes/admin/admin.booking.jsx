@@ -4,11 +4,13 @@ import { Check, X, UserPlus, MoreHorizontal, Filter, Download } from "lucide-rea
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { axiosInstance } from "@/lib/axios";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/admin/admin/booking")({
     component: BookingsPage,
 });
 function BookingsPage() {
+    const { t } = useTranslation();
     const [bookings, setBookings] = useState([]);
     const [filter, setFilter] = useState("all");
 
@@ -23,7 +25,7 @@ function BookingsPage() {
                 setBookings(res.data.bookings);
             }
         } catch (error) {
-            toast.error("Failed to fetch bookings");
+            toast.error(t("admin.failedFetchBookings"));
         }
     };
 
@@ -54,15 +56,15 @@ function BookingsPage() {
         <div className="space-y-6 animate-float-up">
             <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
-                    <h1 className="text-2xl sm:text-3xl font-bold font-display">Bookings</h1>
-                    <p className="text-muted-foreground mt-1">Manage all customer bookings in one place.</p>
+                    <h1 className="text-2xl sm:text-3xl font-bold font-display">{t("admin.bookingsPage.title")}</h1>
+                    <p className="text-muted-foreground mt-1">{t("admin.bookingsPage.subtitle")}</p>
                 </div>
                 <div className="flex gap-2">
                     <Button variant="outline" size="sm">
-                        <Filter className="h-4 w-4 mr-1.5" /> Filter
+                        <Filter className="h-4 w-4 mr-1.5" /> {t("admin.bookingsPage.filter")}
                     </Button>
                     <Button variant="outline" size="sm">
-                        <Download className="h-4 w-4 mr-1.5" /> Export
+                        <Download className="h-4 w-4 mr-1.5" /> {t("admin.bookingsPage.export")}
                     </Button>
                 </div>
             </div>
@@ -70,12 +72,12 @@ function BookingsPage() {
             <div className="rounded-2xl bg-card border border-border shadow-soft overflow-hidden">
                 <div className="border-b border-border px-2 sm:px-4 flex gap-1 overflow-x-auto">
                     {[
-                        ["all", "All"],
-                        ["pending", "Pending"],
-                        ["accepted", "Accepted"],
-                        ["picked", "Picked Up"],
-                        ["delivered", "Delivered"],
-                        ["cancelled", "Cancelled"],
+                        ["all", t("admin.bookingsPage.all")],
+                        ["pending", t("admin.bookingsPage.pending")],
+                        ["accepted", t("admin.bookingsPage.accepted")],
+                        ["picked", t("admin.bookingsPage.pickedUp")],
+                        ["delivered", t("admin.bookingsPage.delivered")],
+                        ["cancelled", t("admin.bookingsPage.cancelled")],
                     ].map(([k, l]) => (
                         <button
                             key={k}
@@ -95,13 +97,13 @@ function BookingsPage() {
                     <table className="w-full text-sm">
                         <thead className="bg-secondary/40 text-xs uppercase tracking-wider text-muted-foreground">
                             <tr>
-                                <th className="text-left font-semibold px-6 py-3">Booking</th>
-                                <th className="text-left font-semibold px-6 py-3">Customer</th>
-                                <th className="text-left font-semibold px-6 py-3">Service</th>
-                                <th className="text-left font-semibold px-6 py-3">Route</th>
-                                <th className="text-left font-semibold px-6 py-3">Date</th>
-                                <th className="text-left font-semibold px-6 py-3">Status</th>
-                                <th className="text-right font-semibold px-6 py-3">Actions</th>
+                                <th className="text-left font-semibold px-6 py-3">{t("admin.bookingsPage.booking")}</th>
+                                <th className="text-left font-semibold px-6 py-3">{t("admin.customer")}</th>
+                                <th className="text-left font-semibold px-6 py-3">{t("admin.service")}</th>
+                                <th className="text-left font-semibold px-6 py-3">{t("admin.bookingsPage.route")}</th>
+                                <th className="text-left font-semibold px-6 py-3">{t("admin.bookingsPage.date")}</th>
+                                <th className="text-left font-semibold px-6 py-3">{t("admin.status")}</th>
+                                <th className="text-right font-semibold px-6 py-3">{t("admin.bookingsPage.actions")}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -133,10 +135,10 @@ function BookingsPage() {
                                     <td className="px-6 py-4">
                                         <div className="text-xs">
                                             <div>
-                                                <span className="text-muted-foreground">From:</span> {b.pickupAddress}
+                                            <span className="text-muted-foreground">{t("admin.bookingsPage.from")}</span> {b.pickupAddress}
                                             </div>
                                             <div>
-                                                <span className="text-muted-foreground">To:</span> {b.dropAddress}
+                                                <span className="text-muted-foreground">{t("admin.bookingsPage.to")}</span> {b.dropAddress}
                                             </div>
                                         </div>
                                     </td>
@@ -177,7 +179,7 @@ function BookingsPage() {
                     </table>
                     {filtered.length === 0 && (
                         <div className="text-center py-12 text-muted-foreground text-sm">
-                            No bookings in this status.
+                            {t("admin.bookingsPage.noBookingsStatus")}
                         </div>
                     )}
                 </div>
@@ -187,12 +189,13 @@ function BookingsPage() {
 }
 
 function StatusBadge({ status }) {
+    const { t } = useTranslation();
     const map = {
-        pending: { label: "Pending", cls: "bg-yellow-500/15 text-yellow-600 border-yellow-400/30" },
-        accepted: { label: "Accepted", cls: "bg-blue-500/10 text-blue-500 border-blue-500/30" },
-        picked: { label: "Picked Up", cls: "bg-purple-500/10 text-purple-500 border-purple-500/30" },
-        delivered: { label: "Delivered", cls: "bg-green-500/10 text-green-600 border-green-500/30" },
-        cancelled: { label: "Cancelled", cls: "bg-red-500/10 text-red-500 border-red-500/30" },
+        pending: { label: t("admin.bookingsPage.pending"), cls: "bg-yellow-500/15 text-yellow-600 border-yellow-400/30" },
+        accepted: { label: t("admin.bookingsPage.accepted"), cls: "bg-blue-500/10 text-blue-500 border-blue-500/30" },
+        picked: { label: t("admin.bookingsPage.pickedUp"), cls: "bg-purple-500/10 text-purple-500 border-purple-500/30" },
+        delivered: { label: t("admin.bookingsPage.delivered"), cls: "bg-green-500/10 text-green-600 border-green-500/30" },
+        cancelled: { label: t("admin.bookingsPage.cancelled"), cls: "bg-red-500/10 text-red-500 border-red-500/30" },
     };
     const cfg = map[status] || { label: status || "Unknown", cls: "bg-gray-500/10 text-gray-500 border-gray-400/30" };
     return (
