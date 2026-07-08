@@ -224,5 +224,30 @@
             "adding": "Adding...",
             "employeeAdded": "Employee added successfully!"
         }
+    },
+    "auth": {
+        "signIn": "Sign In",
+        "register": "Register",
+        "welcomeBack": "Welcome back",
+        "createAccount": "Create an account",
+        "signInDesc": "Sign in to your dashboard.",
+        "registerDesc": "Join MoveMate to manage your moves.",
+        "fullName": "Full Name",
+        "email": "Email",
+        "phone": "Phone",
+        "password": "Password",
+        "registerAs": "Register As",
+        "customer": "Customer",
+        "driverPartner": "Driver Partner",
+        "driverDetails": "Driver Details",
+        "vehicleType": "Vehicle Type",
+        "vehiclePlateNumber": "Vehicle Plate Number",
+        "drivingLicenseNumber": "Driving License Number",
+        "processing": "Processing...",
+        "dashboardHeading": "Manage every move from one beautiful dashboard.",
+        "dashboardSubheading": "Real-time bookings, employee assignment, status tracking — all in one place.",
+        "registeredSuccessfully": "Registered Successfully",
+        "loginSuccessful": "Login Successful",
+        "somethingWentWrong": "Something went wrong"
     }
 }

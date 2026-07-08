@@ -103,8 +103,8 @@ function Booking() {
   }
 
   return (
-    <main className="bg-gray-50 min-h-screen py-10 px-4">
-      <div className="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow">
+    <main className="bg-background text-foreground min-h-screen py-10 px-4">
+      <div className="max-w-4xl mx-auto bg-card border border-border p-8 rounded-xl shadow-card">
         <h1 className="text-3xl font-bold mb-6">{t("booking.title")}</h1>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
@@ -115,10 +115,10 @@ function Booking() {
                 key={item.id}
                 type="button"
                 onClick={() => setService(item.id)}
-                className={`p-4 border rounded-lg transition
+                className={`p-4 border rounded-lg transition cursor-pointer
                   ${service === item.id
-                    ? "border-blue-500 bg-blue-50"
-                    : "border-gray-200 hover:border-blue-300"
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border hover:border-primary/50 text-muted-foreground hover:text-foreground"
                   }`}
               >
                 <Icon className="h-6 w-6 mx-auto mb-2 text-primary" />

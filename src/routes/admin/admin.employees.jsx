@@ -157,10 +157,10 @@ function EmployeesPage() {
             {/* ADD EMPLOYEE MODAL */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-                    <div className="bg-white rounded-2xl w-full max-w-md shadow-lg overflow-hidden animate-in fade-in zoom-in duration-200">
-                        <div className="flex justify-between items-center p-4 border-b">
+                    <div className="bg-card border border-border rounded-2xl w-full max-w-md shadow-lg overflow-hidden animate-in fade-in zoom-in duration-200">
+                        <div className="flex justify-between items-center p-4 border-b border-border">
                             <h2 className="text-lg font-bold">{t("admin.employeesPage.addTitle")}</h2>
-                            <button onClick={() => setIsModalOpen(false)} className="p-1 hover:bg-gray-100 rounded-full">
+                            <button onClick={() => setIsModalOpen(false)} className="p-1 hover:bg-secondary text-muted-foreground hover:text-foreground rounded-full cursor-pointer">
                                 <X className="w-5 h-5" />
                             </button>
                         </div>

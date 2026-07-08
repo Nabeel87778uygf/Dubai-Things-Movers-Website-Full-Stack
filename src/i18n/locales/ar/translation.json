@@ -224,5 +224,30 @@
             "adding": "جارٍ الإضافة...",
             "employeeAdded": "تمت إضافة الموظف بنجاح!"
         }
+    },
+    "auth": {
+        "signIn": "تسجيل الدخول",
+        "register": "إنشاء حساب",
+        "welcomeBack": "مرحبًا بعودتك",
+        "createAccount": "إنشاء حساب جديد",
+        "signInDesc": "قم بتسجيل الدخول إلى لوحة التحكم الخاصة بك.",
+        "registerDesc": "انضم إلى موف ميت لإدارة عمليات النقل الخاصة بك.",
+        "fullName": "الاسم الكامل",
+        "email": "البريد الإلكتروني",
+        "phone": "رقم الهاتف",
+        "password": "كلمة المرور",
+        "registerAs": "التسجيل كـ",
+        "customer": "عميل",
+        "driverPartner": "شريك سائق",
+        "driverDetails": "تفاصيل السائق",
+        "vehicleType": "نوع المركبة",
+        "vehiclePlateNumber": "رقم لوحة المركبة",
+        "drivingLicenseNumber": "رقم رخصة القيادة",
+        "processing": "جاري المعالجة...",
+        "dashboardHeading": "إدارة كل عملية نقل من لوحة تحكم واحدة جميلة.",
+        "dashboardSubheading": "حجوزات في الوقت الفعلي، وتعيين الموظفين، وتتبع الحالة - كل ذلك في مكان واحد.",
+        "registeredSuccessfully": "تم التسجيل بنجاح",
+        "loginSuccessful": "تم تسجيل الدخول بنجاح",
+        "somethingWentWrong": "حدث خطأ ما"
     }
 }

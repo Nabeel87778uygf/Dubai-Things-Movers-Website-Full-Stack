@@ -78,29 +78,29 @@ function Dashboard() {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-white p-6 rounded-lg shadow-sm border">
+                <div className="bg-card p-6 rounded-lg shadow-sm border border-border">
                     <div className="flex items-center gap-3">
                         <Package className="h-8 w-8 text-blue-500" />
                         <div>
-                            <p className="text-sm text-gray-500">{t("admin.totalBookings")}</p>
+                            <p className="text-sm text-muted-foreground">{t("admin.totalBookings")}</p>
                             <p className="text-2xl font-bold">{stats.totalBookings}</p>
                         </div>
                     </div>
                 </div>
-                <div className="bg-white p-6 rounded-lg shadow-sm border">
+                <div className="bg-card p-6 rounded-lg shadow-sm border border-border">
                     <div className="flex items-center gap-3">
                         <DollarSign className="h-8 w-8 text-green-500" />
                         <div>
-                            <p className="text-sm text-gray-500">{t("admin.totalRevenue")}</p>
+                            <p className="text-sm text-muted-foreground">{t("admin.totalRevenue")}</p>
                             <p className="text-2xl font-bold">{i18n.language === "ar" ? "درهم" : "AED"} {stats.totalRevenue}</p>
                         </div>
                     </div>
                 </div>
-                <div className="bg-white p-6 rounded-lg shadow-sm border">
+                <div className="bg-card p-6 rounded-lg shadow-sm border border-border">
                     <div className="flex items-center gap-3">
                         <TrendingUp className="h-8 w-8 text-purple-500" />
                         <div>
-                            <p className="text-sm text-gray-500">{t("admin.commission")}</p>
+                            <p className="text-sm text-muted-foreground">{t("admin.commission")}</p>
                             <p className="text-2xl font-bold">{i18n.language === "ar" ? "درهم" : "AED"} {stats.totalCommission}</p>
                         </div>
                     </div>
@@ -108,25 +108,25 @@ function Dashboard() {
             </div>
 
             {/* Bookings Table */}
-            <div className="bg-white rounded-lg shadow-sm border overflow-x-auto">
+            <div className="bg-card rounded-lg shadow-sm border border-border overflow-x-auto">
                 <table className="w-full">
-                    <thead className="bg-gray-50 border-b">
+                    <thead className="bg-muted/50 border-b border-border">
                         <tr>
-                            <th className="text-left p-4">{t("admin.customer")}</th>
-                            <th className="text-left p-4">{t("admin.service")}</th>
-                            <th className="text-left p-4">{t("admin.fromTo")}</th>
-                            <th className="text-left p-4">{t("admin.price")}</th>
-                            <th className="text-left p-4">{t("admin.commission")}</th>
-                            <th className="text-left p-4">{t("admin.status")}</th>
-                            <th className="text-left p-4">{t("admin.assignDriver")}</th>
+                            <th className="text-left rtl:text-right p-4">{t("admin.customer")}</th>
+                            <th className="text-left rtl:text-right p-4">{t("admin.service")}</th>
+                            <th className="text-left rtl:text-right p-4">{t("admin.fromTo")}</th>
+                            <th className="text-left rtl:text-right p-4">{t("admin.price")}</th>
+                            <th className="text-left rtl:text-right p-4">{t("admin.commission")}</th>
+                            <th className="text-left rtl:text-right p-4">{t("admin.status")}</th>
+                            <th className="text-left rtl:text-right p-4">{t("admin.assignDriver")}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {bookings.map((booking) => (
-                            <tr key={booking._id} className="border-b">
+                            <tr key={booking._id} className="border-b border-border">
                                 <td className="p-4">
                                     {booking.customer?.name}<br />
-                                    <span className="text-xs text-gray-500">{booking.customer?.email}</span>
+                                    <span className="text-xs text-muted-foreground">{booking.customer?.email}</span>
                                 </td>
                                 <td className="p-4">{booking.serviceType}</td>
                                 <td className="p-4">

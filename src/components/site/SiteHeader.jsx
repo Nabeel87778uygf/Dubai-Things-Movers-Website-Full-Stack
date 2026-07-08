@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Truck, Globe, Menu, X } from "lucide-react";
+import { Truck, Globe, Menu, X, Sun, Moon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
@@ -11,6 +11,35 @@ export function SiteHeader() {
   const [role, setRole] = useState(
     typeof window !== "undefined" ? localStorage.getItem("role") : null
   );
+
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== "undefined") {
+      return document.documentElement.classList.contains("dark") ? "dark" : "light";
+    }
+    return "light";
+  });
+
+  // Sync theme with custom event
+  useEffect(() => {
+    const syncTheme = () => {
+      setTheme(document.documentElement.classList.contains("dark") ? "dark" : "light");
+    };
+    window.addEventListener("themeChange", syncTheme);
+    return () => window.removeEventListener("themeChange", syncTheme);
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+    const root = document.documentElement;
+    if (newTheme === "dark") {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
+    localStorage.setItem("theme", newTheme);
+    window.dispatchEvent(new Event("themeChange"));
+  };
 
   // Sync role across tabs and same tab (custom event)
   useEffect(() => {
@@ -93,10 +122,18 @@ export function SiteHeader() {
         <div className="hidden md:flex items-center gap-2">
           <button
             onClick={changeLanguage}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors cursor-pointer"
           >
             <Globe className="h-4 w-4" />
             {i18n.language === "en" ? "AR" : "EN"}
+          </button>
+
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors cursor-pointer"
+            aria-label="Toggle Theme"
+          >
+            {theme === "dark" ? <Sun className="h-4.5 w-4.5" /> : <Moon className="h-4.5 w-4.5" />}
           </button>
 
           {role ? (
@@ -186,10 +223,30 @@ export function SiteHeader() {
                 changeLanguage();
                 setOpen(false);
               }}
-              className="px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-secondary flex items-center gap-2"
+              className="px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-secondary flex items-center gap-2 cursor-pointer w-full text-left rtl:text-right"
             >
               <Globe className="h-4 w-4" />
-              {i18n.language === "en" ? "العربية" : "English"}
+              <span>{i18n.language === "en" ? "العربية" : "English"}</span>
+            </button>
+
+            <button
+              onClick={() => {
+                toggleTheme();
+                setOpen(false);
+              }}
+              className="px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-secondary flex items-center gap-2 cursor-pointer w-full text-left rtl:text-right"
+            >
+              {theme === "dark" ? (
+                <>
+                  <Sun className="h-4 w-4" />
+                  <span>{i18n.language === "en" ? "Light Mode" : "الوضع المضيء"}</span>
+                </>
+              ) : (
+                <>
+                  <Moon className="h-4 w-4" />
+                  <span>{i18n.language === "en" ? "Dark Mode" : "الوضع الداكن"}</span>
+                </>
+              )}
             </button>
 
             <Link to="/booking" onClick={() => setOpen(false)}>
